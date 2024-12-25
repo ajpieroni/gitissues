@@ -13,12 +13,27 @@ if [ -z "$GITHUB_AUTH_TOKEN" ]; then
     echo "Error: GITHUB_AUTH_TOKEN is not set. Please set it in your .env file located at $SCRIPT_DIR or as an environment variable."
     exit 1
 fi
-# Define base API URL
-BASE_API_URL="https://api.github.com/repos/ajpieroni"
 
-# Prompt for repository name
-echo "Enter the repository name (e.g., owner/repository):"
-read -r repository
+# Define base API URL
+BASE_API_URL="https://api.github.com/repos"
+
+# Detect repository from Git if in a Git folder
+if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+    repo_url=$(git remote get-url origin)
+    # Extract owner/repository from URL
+    repository=$(echo "$repo_url" | sed -E 's/.*github\.com[:\/]([^/]+\/[^/]+)\.git/\1/')
+    echo "Detected repository: $repository"
+else
+    # Prompt for repository name if not in a Git folder
+    echo "Enter the repository name (e.g., owner/repository):"
+    read -r repository
+fi
+
+# Ensure repository is set
+if [ -z "$repository" ]; then
+    echo "Error: Repository name is required."
+    exit 1
+fi
 
 # Prompt for issue title
 echo "Enter the issue title:"

@@ -16,3 +16,4 @@ env/
 # General
 .idea/
 *.log
+.env

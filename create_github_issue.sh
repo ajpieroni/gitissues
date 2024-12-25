@@ -25,14 +25,11 @@ if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
     echo "Detected repository: $repository"
 else
     # Prompt for repository name if not in a Git folder
-    echo "Enter the repository name (e.g., owner/repository):"
-    read -r repository
-fi
-
-# Ensure repository is set
-if [ -z "$repository" ]; then
-    echo "Error: Repository name is required."
-    exit 1
+    echo "Enter the repository name (e.g., repository-name only):"
+    read -r repo_name
+    # Prepend "ajpieroni/" to the repository name
+    repository="ajpieroni/$repo_name"
+    echo "Using repository: $repository"
 fi
 
 # Prompt for issue title

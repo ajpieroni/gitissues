@@ -1,16 +1,18 @@
 #!/bin/bash
 
-# Load environment variables from .env if it exists
-if [ -f .env ]; then
-    export $(cat .env | xargs)
+# Get the directory of the current script
+SCRIPT_DIR=$(dirname "$(realpath "$0")")
+
+# Load environment variables from .env in the script's directory
+if [ -f "$SCRIPT_DIR/.env" ]; then
+    export $(cat "$SCRIPT_DIR/.env" | xargs)
 fi
 
 # Ensure the required variables are set
 if [ -z "$GITHUB_AUTH_TOKEN" ]; then
-    echo "Error: GITHUB_AUTH_TOKEN is not set. Please set it in your .env file or as an environment variable."
+    echo "Error: GITHUB_AUTH_TOKEN is not set. Please set it in your .env file located at $SCRIPT_DIR or as an environment variable."
     exit 1
 fi
-
 # Define base API URL
 BASE_API_URL="https://api.github.com/repos/ajpieroni"
 
@@ -29,7 +31,8 @@ assignee="ajpieroni"
 payload=$(cat <<EOF
 {
   "title": "$title",
-  "assignees": ["$assignee"]
+  "assignees": ["$assignee"],
+  "labels": ["untriaged"]
 }
 EOF
 )
